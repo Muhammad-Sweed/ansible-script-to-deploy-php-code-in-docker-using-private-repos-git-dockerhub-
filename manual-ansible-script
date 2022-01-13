@@ -1,0 +1,61 @@
+---
+
+ - hosts: all
+   become: true
+   user: ansible
+   connection: ssh
+   vars:
+          container: 1
+          container_name: docker_ansible
+          container_image: php:7.0.6-apache
+   tasks:
+    - name: Install required system packages
+      apt: name={{ item }} state=latest update_cache=yes
+      loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip', 'virtualenv', 'python3-setuptools']
+
+    - name: Add Docker GPG apt Key
+      apt_key:
+       url: https://download.docker.com/linux/ubuntu/gpg
+       state: present
+    - name: Add Docker Repository
+      apt_repository:
+       repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+       state: present
+       update_cache: "yes"
+
+    - name: Update apt packages
+      apt:
+       update_cache: "yes"
+    - name: install Docker
+      apt:
+       update_cache: "yes"
+       name: "docker-ce"
+       state: latest
+       force_apt_get: "yes"
+    - name: Install Docker Module for Python
+      pip:
+       name: docker
+    - name: Pull default Docker image
+      docker_image:
+       name: "{{ container_image }}"
+       source: pull
+
+    - name: Create default containers
+
+      docker_container:
+
+       name: "{{ container_name }}"
+
+       image: "{{ container_image }}"
+       published_ports: 8080:80
+       volumes:
+
+               - "/var/www/html:/var/www/html"
+
+       state: present
+    - name: Clone Repository
+      git:
+              repo: "https://github.com/zeeshan-athar/php-sweed.git"
+              dest: "/var/www/html"
+
+

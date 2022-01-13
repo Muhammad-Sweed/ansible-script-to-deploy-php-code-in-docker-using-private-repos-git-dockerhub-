@@ -8,3 +8,8 @@ Test ssh connection with github from server using this command.
 
 
 ssh -T git@github.com
+
+
+docker image used:
+https://hub.docker.com/repository/docker/sweedkhan98/docker_ansible
+

@@ -40,7 +40,7 @@
     - name: Log into private registry
       docker_login:
               username: sweedkhan98
-              password: dockerhub@12
+              password: yourpassword
     - name: Pull default Docker image
       docker_image:
        name: "{{ container_image }}"
